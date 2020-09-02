@@ -45,9 +45,8 @@ const App = () => {
     let personWithoutTrim = []
     const personTrated = []
     
-    
     everyPerson.forEach(item => {
-      if(item) {
+      if(item && item != " ".repeat(item.length)) {
         personWithoutTrim.push(item.trim())
       }
     })
