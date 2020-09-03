@@ -1,13 +1,13 @@
 import React from 'react'
 
-import styles from "../styles/CardStyle.js"
+import { CardContainer } from "./styles.js"
 
 const Card = ({name, children}) => {
   return (
-    <div style={styles.participant}>
+    <CardContainer>
       <span>{name}</span>
       {children}
-    </div>
+    </CardContainer>
   )
 }
 

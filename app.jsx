@@ -1,11 +1,16 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 
-import styles from './styles/Styles.js'
-import Winner from './components/Winner.jsx'
-import Card from './components/Card.jsx'
+import { Container, Header, GiveawayBtn } from './styles/mainStyle.js'
+
+import WinnerModal from './components/WinnerModal/index.jsx'
+import ShowParticipants from './components/Participants/index.jsx'
+import Card from './components/Card/index.jsx'
+import FormParticipants from './components/FormParticipants/index.jsx'
+
 import useGive from './Hooks/useGive.js'
 
 const App = () => {
+  
   const [participants, setParticipants] = useState([])
   const [person, setPerson] = useState('')
   const [winner, setWinner] = useState(null)
@@ -19,99 +24,21 @@ const App = () => {
     setWinner(participantWinner)
   }
   
-  const removePeople = (e) => {
-    const refPeople = e.target.attributes.refpart.value
-    
-    const newParticipants = participants
-    
-    newParticipants.splice(refPeople, 1)
-    
-    setParticipants([...newParticipants])
-  }
-  
-  const clearAll = () => {
-    if (participants.length == 0) {
-      return alert('No Participants')
-    }
-    
-    setParticipants([])
-  }
-  
-  const addParticipants = async (e) => {
-    e.preventDefault()
-    
-    const everyPerson = person.split(',')
-    
-    let personWithoutTrim = []
-    const personTrated = []
-    
-    everyPerson.forEach(item => {
-      if(item && item != " ".repeat(item.length)) {
-        personWithoutTrim.push(item.trim())
-      }
-    })
-    
-    for(let personInputed of personWithoutTrim) {
-      if(participants.includes(personInputed)) {
-        return alert(`${personInputed} Already Exists!`)
-      } 
-      
-        const existsIn = personTrated.indexOf(personInputed)
-        
-        if(existsIn === -1) {
-          personTrated.push(personInputed)
-        }
-      }
-    
-    if(participants.length <= 50 && participants.length + personTrated.length <= 50) {
-      setParticipants([...participants, ...personTrated])
-      setPerson('')
-    }
-    else {
-      return alert('You reach the maximun')
-    }
-  }
-  
   return (
-    <div style={styles.container} id="container">
-      <header style={styles.header}>
+    <Container>
+    
+      <Header>
         <h1>GivesMe</h1>
-      </header>
+      </Header>
+  
+      <FormParticipants use={{myParticipants: {participants, state: setParticipants}, myPersons: {person, state: setPerson} }} />
       
-      <form style={styles.form} id="winnerForm" onSubmit={addParticipants}>
-        <fieldset style={styles.field}>
-          <legend style={styles.legend}>Participante:</legend>
-          <input 
-            type="text" 
-            style={styles.input}
-            value={person}
-            onChange={(e) => setPerson(e.target.value)}
-            required
-            />
-        </fieldset>
-        <span style={styles.warn}> Você pode usar , para separar os items ;) </span>
-        <button style={styles.button} type="submit" class="add">Adicionar!</button>
-      </form>
-      <div style={styles.participantPart} id="participants">
-        <button style={styles.button2} onClick={clearAll}>Clear All</button>
-        <div
-        style={participants.length == 0 
-        ? styles.noPart
-        : styles.participant}
-        >
-        {participants.length == 0 
-        ? <p>None Participants</p> 
-        : participants.map(people => (
-          <Card key={participants.indexOf(people)} name={people}>
-            <i style={styles.icon} refPart={participants.indexOf(people)} onClick={removePeople} className="fas fa-times"></i>
-          </Card>
-        ))}
-        
-        </div>
-      </div>
-      <button style={styles.giveBtn} onClick={giveaway} id="giveaway">Giveaway</button>
-      {winner && <Winner win={winner} disable={setWinner} />}
-    </div>
+      <ShowParticipants use={{ref: participants, state: setParticipants}} />
+      
+      <GiveawayBtn onClick={giveaway}>Giveaway</GiveawayBtn>
+      
+      {winner && <WinnerModal win={winner} disable={setWinner} />}
+    </Container>
   )
 }
 
